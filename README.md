@@ -1,8 +1,10 @@
 # :fire: sky.js
 
-:tv: SKY.COM.BR API Wrapper
+SKY.COM.BR API Wrapper
 
-Usage:
+---
+
+### Usage
 
 ```javascript
 const Sky = require("./sky");
@@ -10,10 +12,28 @@ const Sky = require("./sky");
 async function example() {
   let SkyAuthentication = await Sky.authenticate("CPF", "PASSWORD");
 
-  console.log(SkyAuthentication);
-  // SkyAuthentication = { error: ERROR MESSAGE }
-  // SkyAuthentication = { success: true, token: TOKEN }
+  if (SkyAuthentication.error) return console.error(SkyAuthentication.error);
+
+  let Token = SkyAuthentication.token;
+
+  let UserCEP = await Sky.get(Token, "CEP");
+  let UserEmail = await Sky.get(Token, "Email");
+
+  console.log(`CEP: ${UserCEP}`);
+  console.log(`EMAIL: ${UserEmail}`);
+  // CEP: 0000000
+  // EMAIL: user@email.com
 }
 
 example();
 ```
+
+---
+
+### Functions
+
+- Sky.**authenticate**(cpf = String, password = String)
+
+* Sky.**get**(token = String, **info** = String)
+
+      -   info:  "Id", "ParentId", "Email", "DNA", "StatusAssinatura", "ValorEmAberto", "CEP", "TipoAssinatura", "ModoEntrega", "Produtos", "Equipamentos", "IlhaMaster", "Tier1", "PrincipalId", "Enderecos", "Telefones", "TipoOrganizacao", "PassoRegua", "GeoCode", "Fidelizado", "PossuiInteratividadePrePago", "PossuiSKYDigitalCortesia", "PossuiCanaisCortesiaLivre", "DataAtivacao", "DataFidelizacao", "TipoCliente", "Segmento", "Pacote", "GloboCongelada", "ListaDeCanais", "CodigoTipoAssinatura", "CanceladoAteSeisMeses", "DataCancelamento"
