@@ -1,6 +1,24 @@
 const axios = require("axios");
 
-export async function authenticate(cpf, password) {
+const Sessions = [];
+
+async function get(UserToken = String, UserInfo = String) {
+  let Session = Sessions.filter(session =>
+    String(session.Token).includes(UserToken)
+  )[0];
+  if (!Session) {
+    console.error("[sky.js] Nenhuma sessão encontrada com este token.");
+  } else {
+    return Session.Dados[UserInfo]
+      ? Session.Dados[UserInfo]
+      : console.error(
+          "[sky.js] Informação não encontrada. As informações disponpiveis são: " +
+            Object.getOwnPropertyNames(Session)
+        );
+  }
+}
+
+async function authenticate(cpf = String, password = String) {
   let reqPostfields = {
     login: cpf,
     senha: password
@@ -33,8 +51,22 @@ export async function authenticate(cpf, password) {
   if (reqResponse.SKYException) {
     return { error: reqResponse.SKYException };
   } else if (reqResponse.Token) {
-    return { success: true, token: reqResponse.Token };
+    // SUCCESS LOGIN
+    let DadosBasicos = JSON.parse(reqResponse.ResultString).DadosBasicos;
+    let DadosUsuario = DadosBasicos.Assinaturas[0];
+    Sessions.push({
+      Token: reqResponse.Token,
+      Dados: DadosUsuario
+    });
+    return {
+      success: true,
+      token: reqResponse.Token
+    };
   } else {
     return { error: "Erro desconhecido." };
   }
 }
+
+module.exports.authenticate = authenticate;
+module.exports.Sessions = Sessions;
+module.exports.get = get;
