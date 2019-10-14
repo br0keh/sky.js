@@ -1,10 +1,3 @@
-# :fire: sky.js
-
-:tv: SKY.COM.BR API Wrapper
-
-Usage:
-
-```javascript
 const Sky = require("./sky");
 
 async function example() {
@@ -16,4 +9,3 @@ async function example() {
 }
 
 example();
-```
